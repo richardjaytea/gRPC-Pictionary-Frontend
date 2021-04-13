@@ -9,11 +9,11 @@ export class ChatService {
   private clientId!: string
   public messageStream!: ClientReadableStream<unknown>
 
-  public connectMessageStream(roomKey: string): Promise<void> {
+  public connectMessageStream(roomKey: string, callback: (response: unknown) => void): void {
     const request = new Room()
     request.setKey(roomKey)
 
-    return this.chatService.connectChat(request, null)
+    this.chatService.connectChat(request, null)
       .then((response: Client) => {
         this.roomKey = response.getRoomkey()
         this.clientId = response.getId()
@@ -22,6 +22,8 @@ export class ChatService {
       })
       .then((response: ClientReadableStream<unknown>) => {
         this.messageStream = response
+
+        this.messageStream.on('data', callback)
 
         this.messageStream.on('error', err => {
           console.log(`Unexpected stream error: code = ${err.code}` +
