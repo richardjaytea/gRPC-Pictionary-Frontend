@@ -9,12 +9,14 @@
         {{ message.name }} {{ message.content }}
       </div>
     </div>
-    <b-form-input
-      @keydown.enter="sendMessage()"
-      v-model="inputText"
-      placeholder="Type here..."
-      class="chat--input"
-    />
+    <div class="chat--input-container">
+      <b-form-input
+        @keyup.enter="sendMessage()"
+        v-model="inputText"
+        placeholder="Type here..."
+        class="chat--input"
+      />
+    </div>
   </div>
 </template>
 
@@ -54,19 +56,27 @@ export default class Chat extends Vue {
 .chat {
   display: flex;
   flex-direction: column;
-  position: fixed;
   height: 100%;
   width: 100%;
 
   &--messages-container {
+    word-wrap: break-word;
     overflow-y: scroll;
-    height: 100%;
+    position: absolute;
+    height: 94%;
     width: 100%;
   }
 
   &--message {
     text-align: left;
     padding: 0 4px 4px 8px;
+  }
+
+  &--input-container {
+    position: absolute;
+    bottom: 0;
+    padding: 8px;
+    width: 100%;
   }
 }
 </style>
