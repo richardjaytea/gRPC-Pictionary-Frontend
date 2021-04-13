@@ -22,6 +22,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { ChatService } from '@/service/ChatService'
+import { MessageResponse } from '@/pb/services_pb'
 
 interface Message {
   name: string
@@ -31,12 +33,14 @@ interface Message {
 @Component
 export default class Chat extends Vue {
   @Prop({ type: String, required: true }) private readonly user!: string
+  @Prop({ type: String, required: true }) private readonly roomKey!: string
 
+  private chatService!: ChatService
   private inputText: string = ''
   private messages: Message[] = []
 
   private sendMessage(): void {
-    this.messages.push({ name: this.user, content: this.inputText })
+    this.chatService.sendMessage(this.inputText)
     this.inputText = ''
     this.$nextTick(() => {
       this.scrollToBottom()
@@ -48,6 +52,17 @@ export default class Chat extends Vue {
     if (container) {
       container.scrollTop = container.scrollHeight
     }
+  }
+
+  public created(): void {
+    this.chatService = new ChatService()
+    this.chatService.connectMessageStream(this.roomKey)
+      .then(() => {
+        this.chatService.messageStream.on('data', response => {
+          const resp: MessageResponse = response as MessageResponse
+          this.messages.push({ name: this.user, content: resp.getContent() })
+        })
+      })
   }
 }
 </script>

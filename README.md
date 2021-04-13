@@ -5,6 +5,15 @@
 npm install
 ```
 
+### Complies and generates protobuf files
+```
+protoc -I=. services.proto --js_out=import_style=commonjs,binary:. --grpc-web_out=import_style=typescript,mode=grpcwebtext:.
+```
+### Deploy envoy proxy container
+```
+docker run -d -v "$(pwd)"/envoy.yaml:/etc/envoy/envoy.yaml:ro -p 8081:8081 -p 9901:9901 envoyproxy/envoy:v1.17.0
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

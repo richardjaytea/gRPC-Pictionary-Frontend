@@ -5,7 +5,7 @@
         cols="9"
         class="room--grid-cols"
       >
-        <img :rc="imageSrc">
+        <img :src="imageSrc">
       </b-col>
       <b-col
         cols="3"
@@ -13,6 +13,7 @@
       >
         <chat
           user="JT"
+          room-key="test_room"
           class="room--chat"
         />
       </b-col>
@@ -30,7 +31,7 @@ import Chat from '@/components/Chat.vue'
   }
 })
 export default class Room extends Vue {
-  private imageSrc!: string
+  private imageSrc: string = ''
 }
 </script>
 
