@@ -21,3 +21,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+/src/pb/services_pb.d.ts
+/src/pb/services_pb.js
+/src/pb/ServicesServiceClientPb.ts
