@@ -11,7 +11,7 @@ protoc -I=. services.proto --js_out=import_style=commonjs,binary:. --grpc-web_ou
 ```
 ### Deploy envoy proxy container
 ```
-docker run -d -v "$(pwd)"/envoy.yaml:/etc/envoy/envoy.yaml:ro -p 8081:8081 -p 9901:9901 envoyproxy/envoy:v1.17.0
+docker run -d -v "$(pwd)"/envoy.yaml:/etc/envoy/envoy.yaml:ro -p 8081:8081 -p 8082:8082 -p 9901:9901 envoyproxy/envoy:v1.17.0
 ```
 
 ### Compiles and hot-reloads for development

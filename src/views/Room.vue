@@ -5,7 +5,7 @@
         cols="9"
         class="room--grid-cols"
       >
-        <img :src="imageSrc">
+        <c-image room-key="test_room"/>
       </b-col>
       <b-col
         cols="3"
@@ -24,9 +24,11 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Chat from '@/components/Chat.vue'
+import CImage from '@/components/CImage.vue'
 
 @Component({
   components: {
+    CImage,
     Chat
   }
 })
@@ -52,10 +54,5 @@ export default class Room extends Vue {
   &--chat {
     border-left: 1px solid #ced4da;
   }
-}
-
-img {
-  max-width:100%;
-  max-height: 100%;
 }
 </style>

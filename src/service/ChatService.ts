@@ -7,7 +7,7 @@ export class ChatService {
   private readonly chatService = new ChatClient('http://localhost:8081', null, null)
   private roomKey!: string
   private clientId!: string
-  public messageStream!: ClientReadableStream<unknown>
+  private messageStream!: ClientReadableStream<unknown>
 
   public connectMessageStream(roomKey: string, callback: (response: unknown) => void): void {
     const request = new Room()
