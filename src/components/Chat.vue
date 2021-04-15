@@ -56,9 +56,9 @@ export default class Chat extends Vue {
 
   public created(): void {
     this.chatService = new ChatService()
-    this.chatService.connectMessageStream(this.roomKey, response => {
+    this.chatService.connectMessageStream(this.roomKey, this.user, response => {
       const resp: MessageResponse = response as MessageResponse
-      this.messages.push({ name: this.user, content: resp.getContent() })
+      this.messages.push({ name: resp.getName(), content: resp.getContent() })
     })
   }
 }

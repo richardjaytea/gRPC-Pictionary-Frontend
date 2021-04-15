@@ -1,6 +1,6 @@
 import * as grpcWeb from 'grpc-web'
 import { ChatClient } from '@/pb/ServicesServiceClientPb'
-import { Client, MessageRequest, Room } from '@/pb/services_pb'
+import { Client, MessageRequest, UserRequest } from '@/pb/services_pb'
 import { ClientReadableStream } from 'grpc-web'
 
 export class ChatService {
@@ -9,9 +9,10 @@ export class ChatService {
   private clientId!: string
   private messageStream!: ClientReadableStream<unknown>
 
-  public connectMessageStream(roomKey: string, callback: (response: unknown) => void): void {
-    const request = new Room()
-    request.setKey(roomKey)
+  public connectMessageStream(roomKey: string, name: string, callback: (response: unknown) => void): void {
+    const request = new UserRequest()
+    request.setRoomkey(roomKey)
+    request.setName(name)
 
     this.chatService.connectChat(request, null)
       .then((response: Client) => {

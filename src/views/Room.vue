@@ -5,15 +5,15 @@
         cols="9"
         class="room--grid-cols"
       >
-        <c-image room-key="test_room"/>
+        <c-image :room-key="roomKey"/>
       </b-col>
       <b-col
         cols="3"
         class="room--grid-cols"
       >
         <chat
-          user="JT"
-          room-key="test_room"
+          :user="user"
+          :room-key="roomKey"
           class="room--chat"
         />
       </b-col>
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import Chat from '@/components/Chat.vue'
 import CImage from '@/components/CImage.vue'
 
@@ -33,7 +33,8 @@ import CImage from '@/components/CImage.vue'
   }
 })
 export default class Room extends Vue {
-  private imageSrc: string = ''
+  @Prop({ type: String, required: true }) private readonly user!: string
+  @Prop({ type: String, required: true }) private readonly roomKey!: string
 }
 </script>
 
