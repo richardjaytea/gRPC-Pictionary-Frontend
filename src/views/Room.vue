@@ -49,6 +49,8 @@ export default class Room extends Vue {
 
   &--grid-cols {
     padding: 0 !important;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   &--chat {
