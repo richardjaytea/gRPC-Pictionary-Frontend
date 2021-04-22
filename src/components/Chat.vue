@@ -32,9 +32,6 @@ interface Message {
 
 @Component
 export default class Chat extends Vue {
-  @Prop({ type: String, required: true }) private readonly user!: string
-  @Prop({ type: String, required: true }) private readonly roomKey!: string
-
   private chatService!: ChatService
   private inputText: string = ''
   private messages: Message[] = []
@@ -56,7 +53,7 @@ export default class Chat extends Vue {
 
   public created(): void {
     this.chatService = new ChatService()
-    this.chatService.connectMessageStream(this.roomKey, this.user, response => {
+    this.chatService.connectMessageStream(response => {
       const resp: MessageResponse = response as MessageResponse
       this.messages.push({ name: resp.getName(), content: resp.getContent() })
     })

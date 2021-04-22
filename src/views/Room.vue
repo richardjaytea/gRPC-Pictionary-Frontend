@@ -5,17 +5,13 @@
         cols="9"
         class="room--grid-cols"
       >
-        <c-image :room-key="roomKey"/>
+        <c-image />
       </b-col>
       <b-col
         cols="3"
         class="room--grid-cols"
       >
-        <chat
-          :user="user"
-          :room-key="roomKey"
-          class="room--chat"
-        />
+        <chat class="room--chat" />
       </b-col>
     </b-row>
   </div>

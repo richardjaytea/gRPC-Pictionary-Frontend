@@ -25,22 +25,29 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { AuthService } from '@/service/AuthService'
 
 @Component
 export default class Login extends Vue {
+  private authService!: AuthService
   private name: string = ''
   private room: string = ''
 
   private login(): void {
-    this.$store.dispatch('setUser', this.name)
-    this.$store.dispatch('setRoom', this.room)
-    this.$router.push({
-      name: 'Room',
-      params: {
-        user: this.name,
-        roomKey: this.room
-      }
-    })
+    this.authService.authenticate(this.name, this.room)
+      .then(() => {
+        this.$router.push({
+          name: 'Room',
+          params: {
+            user: this.name,
+            roomKey: this.room
+          }
+        })
+      })
+  }
+
+  public created(): void {
+    this.authService = new AuthService()
   }
 }
 </script>

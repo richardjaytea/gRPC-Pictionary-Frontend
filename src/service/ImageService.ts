@@ -1,17 +1,17 @@
 import * as grpcWeb from 'grpc-web'
 import { ClientReadableStream } from 'grpc-web'
 import { ImageClient } from '@/pb/ServicesServiceClientPb'
-import { Room } from '@/pb/services_pb'
+import { Client } from '@/pb/services_pb'
+import store from '@/store'
 
 export class ImageService {
   private readonly imageService = new ImageClient('http://localhost:8082', null, null)
-  private roomKey!: string
   private imageStream!: ClientReadableStream<unknown>
 
-  public connectImageStream(roomKey: string, callback: (response: unknown) => void): void {
-    const request = new Room()
-    request.setKey(roomKey)
-    this.roomKey = roomKey
+  public connectImageStream(callback: (response: unknown) => void): void {
+    const request = new Client()
+    request.setRoomkey(store.getters.getRoom)
+    request.setId(store.getters.getId)
 
     this.imageStream = this.imageService.getImage(request)
 

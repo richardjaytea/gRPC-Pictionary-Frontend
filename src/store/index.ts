@@ -5,15 +5,25 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    id: '',
     user: '',
     room: ''
   },
   getters: {
+    getId: state => {
+      return state.id
+    },
     getUser: state => {
       return state.user
+    },
+    getRoom: state => {
+      return state.room
     }
   },
   mutations: {
+    SET_ID(state, id) {
+      state.id = id
+    },
     SET_USER(state, name) {
       state.user = name
     },
@@ -21,14 +31,7 @@ const store = new Vuex.Store({
       state.room = key
     }
   },
-  actions: {
-    setUser({ commit }, name) {
-      commit('SET_USER', name)
-    },
-    setRoom({ commit }, key) {
-      commit('SET_ROOM', key)
-    }
-  },
+  actions: {},
   modules: {}
 })
 

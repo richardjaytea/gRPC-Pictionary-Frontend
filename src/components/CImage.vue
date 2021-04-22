@@ -9,14 +9,12 @@ import { ImageResponse } from '../pb/services_pb'
 
 @Component
 export default class CImage extends Vue {
-  @Prop({ type: String, required: true }) private readonly roomKey!: string
-
   private imageService!: ImageService
   private imageSrc: string = ''
 
   public created(): void {
     this.imageService = new ImageService()
-    this.imageService.connectImageStream(this.roomKey, response => {
+    this.imageService.connectImageStream(response => {
       const resp: ImageResponse = response as ImageResponse
       this.imageSrc = resp.getContent()
     })

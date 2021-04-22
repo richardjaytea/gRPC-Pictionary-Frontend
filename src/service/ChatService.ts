@@ -1,40 +1,31 @@
 import * as grpcWeb from 'grpc-web'
 import { ChatClient } from '@/pb/ServicesServiceClientPb'
-import { Client, MessageRequest, UserRequest } from '@/pb/services_pb'
+import { MessageRequest, MessageStreamRequest } from '@/pb/services_pb'
 import { ClientReadableStream } from 'grpc-web'
+import store from '@/store'
 
 export class ChatService {
   private readonly chatService = new ChatClient('http://localhost:8081', null, null)
-  private roomKey!: string
-  private clientId!: string
   private messageStream!: ClientReadableStream<unknown>
 
-  public connectMessageStream(roomKey: string, name: string, callback: (response: unknown) => void): void {
-    const request = new UserRequest()
-    request.setRoomkey(roomKey)
-    request.setName(name)
+  public connectMessageStream(callback: (response: unknown) => void): void {
+    const request = new MessageStreamRequest()
+    request.setId(store.getters.getId)
+    request.setRoomkey(store.getters.getRoom)
+    request.setName(store.getters.getUser)
 
-    this.chatService.connectChat(request, null)
-      .then((response: Client) => {
-        this.roomKey = response.getRoomkey()
-        this.clientId = response.getId()
+    this.messageStream = this.chatService.getMessages(request)
 
-        return this.chatService.getMessages(response)
-      })
-      .then((response: ClientReadableStream<unknown>) => {
-        this.messageStream = response
+    this.messageStream.on('data', callback)
 
-        this.messageStream.on('data', callback)
+    this.messageStream.on('error', err => {
+      console.log(`Unexpected stream error: code = ${err.code}` +
+        `, message = "${err.message}"`)
+    })
 
-        this.messageStream.on('error', err => {
-          console.log(`Unexpected stream error: code = ${err.code}` +
-            `, message = "${err.message}"`)
-        })
-
-        this.messageStream.on('end', () => {
-          console.log('stream end signal received')
-        })
-      })
+    this.messageStream.on('end', () => {
+      console.log('stream end signal received')
+    })
   }
 
   public sendMessage(content: string): void {
@@ -43,8 +34,8 @@ export class ChatService {
 
   private buildMessage(content: string): MessageRequest {
     const request = new MessageRequest()
-    request.setId(this.clientId)
-    request.setRoomkey(this.roomKey)
+    request.setId(store.getters.getId)
+    request.setRoomkey(store.getters.getRoom)
     request.setContent(content)
 
     return request
