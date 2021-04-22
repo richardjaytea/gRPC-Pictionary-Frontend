@@ -37,11 +37,13 @@ export default class Chat extends Vue {
   private messages: Message[] = []
 
   private sendMessage(): void {
-    this.chatService.sendMessage(this.inputText)
-    this.inputText = ''
-    this.$nextTick(() => {
-      this.scrollToBottom()
-    })
+    if (this.inputText.trim() !== '') {
+      this.chatService.sendMessage(this.inputText)
+      this.inputText = ''
+      this.$nextTick(() => {
+        this.scrollToBottom()
+      })
+    }
   }
 
   private scrollToBottom(): void {
