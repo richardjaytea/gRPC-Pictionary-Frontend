@@ -78,6 +78,7 @@
       ]
     }
   },
+  "eslintIgnore": ["ServicesServiceClientPb.ts", "services_pb.js", "services_pb.d.ts"],
   "browserslist": [
     "> 1%",
     "last 2 versions",
