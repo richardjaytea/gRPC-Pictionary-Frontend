@@ -10,16 +10,12 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Login',
-    component: Login,
-    meta: {
-      isAuthenticated: false
-    }
+    component: Login
   },
   {
     path: '/room',
     name: 'Room',
-    component: Room,
-    props: true
+    component: Room
   }
 ]
 

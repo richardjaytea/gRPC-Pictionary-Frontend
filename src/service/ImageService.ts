@@ -26,4 +26,8 @@ export class ImageService {
       console.log('stream end signal received')
     })
   }
+
+  public cancelImageStream(): void {
+    this.imageStream.cancel()
+  }
 }

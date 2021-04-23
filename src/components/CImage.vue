@@ -12,6 +12,10 @@ export default class CImage extends Vue {
   private imageService!: ImageService
   private imageSrc: string = ''
 
+  public cancelStream(): void {
+    this.imageService.cancelImageStream()
+  }
+
   public created(): void {
     this.imageService = new ImageService()
     this.imageService.connectImageStream(response => {

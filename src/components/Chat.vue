@@ -66,6 +66,10 @@ export default class Chat extends Vue {
     return name === '*System*'
   }
 
+  public cancelStream(): void {
+    this.chatService.cancelMessageStream()
+  }
+
   public created(): void {
     this.chatService = new ChatService()
     this.chatService.connectMessageStream(response => {

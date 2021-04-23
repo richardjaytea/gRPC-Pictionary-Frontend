@@ -49,4 +49,8 @@ export class ChatService {
       }
     }
   }
+
+  public cancelMessageStream(): void {
+    this.messageStream.cancel()
+  }
 }
