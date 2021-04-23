@@ -6,7 +6,19 @@
         :key="index"
         class="chat--message"
       >
-        {{ message.name }} {{ message.content }}
+        <div
+          v-if="isSystem(message.name)"
+          class="chat--message-system"
+        >
+          {{ message.content }}
+        </div>
+
+        <template v-else>
+          <span class="chat--message-username">
+            {{ message.name }}
+          </span>
+          {{ message.content }}
+        </template>
       </div>
     </div>
     <div class="chat--input-container">
@@ -21,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { ChatService } from '@/service/ChatService'
 import { MessageResponse } from '@/pb/services_pb'
 
@@ -53,6 +65,10 @@ export default class Chat extends Vue {
     }
   }
 
+  private isSystem(name: string): boolean {
+    return name === '*System*'
+  }
+
   public created(): void {
     this.chatService = new ChatService()
     this.chatService.connectMessageStream(response => {
@@ -81,6 +97,15 @@ export default class Chat extends Vue {
   &--message {
     text-align: left;
     padding: 0 4px 4px 8px;
+  }
+
+  &--message-system {
+    color: limegreen;
+  }
+
+  &--message-username {
+    font-weight: bold;
+    color: dodgerblue;
   }
 
   &--input-container {
