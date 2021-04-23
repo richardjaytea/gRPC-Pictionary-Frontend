@@ -52,9 +52,6 @@ export default class Chat extends Vue {
     if (this.inputText.trim() !== '') {
       this.chatService.sendMessage(this.inputText)
       this.inputText = ''
-      this.$nextTick(() => {
-        this.scrollToBottom()
-      })
     }
   }
 
@@ -74,6 +71,9 @@ export default class Chat extends Vue {
     this.chatService.connectMessageStream(response => {
       const resp: MessageResponse = response as MessageResponse
       this.messages.push({ name: resp.getName(), content: resp.getContent() })
+      this.$nextTick(() => {
+        this.scrollToBottom()
+      })
     })
   }
 }
