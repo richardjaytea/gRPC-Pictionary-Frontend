@@ -1,5 +1,7 @@
 <template>
-  <img :src="imageSrc">
+  <div class="image">
+    <img :src="imageSrc">
+  </div>
 </template>
 
 <script lang="ts">
@@ -27,8 +29,15 @@ export default class CImage extends Vue {
 </script>
 
 <style lang="scss">
-img {
-  max-width:100%;
-  max-height: 100%;
+.image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  img {
+    max-height: 100%;
+    max-width: 100%;
+  }
 }
 </style>
