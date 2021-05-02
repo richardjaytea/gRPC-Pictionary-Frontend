@@ -7,14 +7,18 @@ import store from '@/store'
 export class ImageService {
   private readonly imageService = new ImageClient('http://localhost:8082', null, null)
   private imageStream!: ClientReadableStream<unknown>
+  private wordStream!: ClientReadableStream<unknown>
 
-  public connectImageStream(callback: (response: unknown) => void): void {
+  constructor() {
     const request = new Client()
     request.setRoomkey(store.getters.getRoom)
     request.setId(store.getters.getId)
 
     this.imageStream = this.imageService.getImage(request)
+    this.wordStream = this.imageService.getWords(request)
+  }
 
+  public connectImageStream(callback: (response: unknown) => void): void {
     this.imageStream.on('data', callback)
 
     this.imageStream.on('error', err => {
@@ -23,6 +27,19 @@ export class ImageService {
     })
 
     this.imageStream.on('end', () => {
+      console.log('stream end signal received')
+    })
+  }
+
+  public connectWordStream(callback: (response: unknown) => void): void {
+    this.wordStream.on('data', callback)
+
+    this.wordStream.on('error', err => {
+      console.log(`Unexpected stream error: code = ${err.code}` +
+        `, message = "${err.message}"`)
+    })
+
+    this.wordStream.on('end', () => {
       console.log('stream end signal received')
     })
   }

@@ -8,14 +8,16 @@ export class ChatService {
   private readonly chatService = new ChatClient('http://localhost:8081', null, null)
   private messageStream!: ClientReadableStream<unknown>
 
-  public connectMessageStream(callback: (response: unknown) => void): void {
+  constructor() {
     const request = new MessageStreamRequest()
     request.setId(store.getters.getId)
     request.setRoomkey(store.getters.getRoom)
     request.setName(store.getters.getUser)
 
     this.messageStream = this.chatService.getMessages(request)
+  }
 
+  public connectMessageStream(callback: (response: unknown) => void): void {
     this.messageStream.on('data', callback)
 
     this.messageStream.on('error', err => {
