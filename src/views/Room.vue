@@ -5,13 +5,13 @@
         cols="9"
         class="room--grid-cols"
       >
-        <c-image ref="image" />
+        <c-image />
       </b-col>
       <b-col
         cols="3"
         class="room--grid-cols"
       >
-        <chat ref="chat" class="room--chat" />
+        <chat class="room--chat" />
       </b-col>
     </b-row>
   </div>
@@ -22,6 +22,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import Chat from '@/components/Chat.vue'
 import CImage from '@/components/CImage.vue'
 import { Route } from 'vue-router'
+import { mapGetters } from 'vuex'
+import { ChatService } from '@/service/ChatService'
+import { ImageService } from '@/service/ImageService'
 
 Component.registerHooks(['beforeRouteLeave'])
 
@@ -29,19 +32,24 @@ Component.registerHooks(['beforeRouteLeave'])
   components: {
     CImage,
     Chat
+  },
+  computed: {
+    ...mapGetters({
+      chatService: 'getChatService',
+      imageService: 'getImageService'
+    })
   }
 })
 export default class Room extends Vue {
-  $refs!: {
-    image: CImage,
-    chat: Chat
-  }
+  // Mapped Getters
+  private chatService!: ChatService
+  private imageService!: ImageService
 
   // eslint-disable-next-line
   public beforeRouteLeave(to: Route, from: Route, next: any): void {
     if (confirm('You will be taken back to the Login page. Do you want to continue?')) {
-      this.$refs.image.cancelStream()
-      this.$refs.chat.cancelStream()
+      this.chatService.cancelAllStreams()
+      this.imageService.cancelAllStreams()
       next()
     }
 

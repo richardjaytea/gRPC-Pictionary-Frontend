@@ -1,6 +1,6 @@
 import * as grpcWeb from 'grpc-web'
 import { ChatClient } from '@/pb/ServicesServiceClientPb'
-import { MessageRequest, MessageStreamRequest } from '@/pb/services_pb'
+import { MatchWordResponse, MessageRequest, MessageResponse, MessageStreamRequest } from '@/pb/services_pb'
 import { ClientReadableStream } from 'grpc-web'
 import store from '@/store'
 
@@ -14,10 +14,12 @@ export class ChatService {
     request.setRoomkey(store.getters.getRoom)
     request.setName(store.getters.getUser)
 
-    this.messageStream = this.chatService.getMessages(request)
+    this.connectMessageStream(request, this.storeMessageCallback)
   }
 
-  public connectMessageStream(callback: (response: unknown) => void): void {
+  private connectMessageStream(request: MessageStreamRequest, callback: (response: unknown) => void): void {
+    this.messageStream = this.chatService.getMessages(request)
+
     this.messageStream.on('data', callback)
 
     this.messageStream.on('error', err => {
@@ -30,8 +32,25 @@ export class ChatService {
     })
   }
 
+  private storeMessageCallback = (response: unknown) => {
+    const resp: MessageResponse = response as MessageResponse
+    store.commit('ADD_MESSAGE', { name: resp.getName(), content: resp.getContent() })
+  }
+
   public sendMessage(content: string): void {
-    this.chatService.sendMessage(this.buildMessage(content), null, this.errorFunc())
+    this.chatService.sendMessage(
+      this.buildMessage(content),
+      null,
+      (err, response) => {
+        if (err) {
+          console.log(err.message)
+          return
+        }
+        const resp: MatchWordResponse = response as MatchWordResponse
+        if (resp.getMatch()) {
+          store.commit('ADD_MATCHED_WORD', content)
+        }
+      })
   }
 
   private buildMessage(content: string): MessageRequest {
@@ -43,16 +62,7 @@ export class ChatService {
     return request
   }
 
-  private errorFunc() {
-    return (err: grpcWeb.Error) => {
-      if (err) {
-        console.log(`Unexpected error: code = ${err.code}` +
-          `, message = "${err.message}"`)
-      }
-    }
-  }
-
-  public cancelMessageStream(): void {
+  public cancelAllStreams(): void {
     this.messageStream.cancel()
   }
 }

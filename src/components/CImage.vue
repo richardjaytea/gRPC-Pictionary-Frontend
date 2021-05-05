@@ -15,19 +15,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { ImageService } from '../service/ImageService'
-import { ImageResponse, WordResponse } from '../pb/services_pb'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { mapGetters } from 'vuex'
 
 interface WordDisplay {
   [key: string]: string
 }
 
-@Component
+@Component({
+  computed: {
+    ...mapGetters({
+      words: 'getWords',
+      matchedWords: 'getMatchedWords',
+      imageSrc: 'getImage'
+    })
+  }
+})
 export default class CImage extends Vue {
-  private imageService!: ImageService
-  private imageSrc: string = ''
-  private words: string[] = []
+  // Mapped Getters
+  private imageSrc!: string
+  private words!: string[]
+  private matchedWords!: string[]
 
   private get formattedWords(): WordDisplay {
     let formattedWord = ''
@@ -35,6 +43,11 @@ export default class CImage extends Vue {
     const formattedObj: WordDisplay = {}
 
     for (const word of this.words) {
+      if (this.matchedWords.indexOf(word) >= 0) {
+        formattedObj[word] = word
+        continue
+      }
+
       for (let i = 0; i < word.length; i++) {
         if (i === 0 || foundSpace) {
           formattedWord += word[i] + ' '
@@ -52,23 +65,6 @@ export default class CImage extends Vue {
     }
 
     return formattedObj
-  }
-
-  public cancelStream(): void {
-    this.imageService.cancelImageStream()
-  }
-
-  public created(): void {
-    this.imageService = new ImageService()
-    this.imageService.connectImageStream(response => {
-      const resp: ImageResponse = response as ImageResponse
-      this.imageSrc = resp.getContent()
-    })
-    this.imageService.connectWordStream(response => {
-      const resp: WordResponse = response as WordResponse
-      this.words = resp.getWordsList()
-      console.log(this.words)
-    })
   }
 }
 </script>

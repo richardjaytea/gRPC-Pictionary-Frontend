@@ -1,7 +1,7 @@
 import * as grpcWeb from 'grpc-web'
 import { ClientReadableStream } from 'grpc-web'
 import { ImageClient } from '@/pb/ServicesServiceClientPb'
-import { Client } from '@/pb/services_pb'
+import { Client, ImageResponse, WordResponse } from '@/pb/services_pb'
 import store from '@/store'
 
 export class ImageService {
@@ -14,11 +14,13 @@ export class ImageService {
     request.setRoomkey(store.getters.getRoom)
     request.setId(store.getters.getId)
 
-    this.imageStream = this.imageService.getImage(request)
-    this.wordStream = this.imageService.getWords(request)
+    this.connectImageStream(request, this.storeImageCallback)
+    this.connectWordStream(request, this.storeWordsCallback)
   }
 
-  public connectImageStream(callback: (response: unknown) => void): void {
+  private connectImageStream(request: Client, callback: (response: unknown) => void): void {
+    this.imageStream = this.imageService.getImage(request)
+
     this.imageStream.on('data', callback)
 
     this.imageStream.on('error', err => {
@@ -31,7 +33,14 @@ export class ImageService {
     })
   }
 
-  public connectWordStream(callback: (response: unknown) => void): void {
+  private storeImageCallback = (response: unknown) => {
+    const resp: ImageResponse = response as ImageResponse
+    store.commit('SET_IMAGE', resp.getContent())
+  }
+
+  private connectWordStream(request: Client, callback: (response: unknown) => void): void {
+    this.wordStream = this.imageService.getWords(request)
+
     this.wordStream.on('data', callback)
 
     this.wordStream.on('error', err => {
@@ -44,7 +53,15 @@ export class ImageService {
     })
   }
 
-  public cancelImageStream(): void {
+  private storeWordsCallback = (response: unknown) => {
+    const resp: WordResponse = response as WordResponse
+    store.commit('SET_WORDS', resp.getWordsList())
+    store.commit('CLEAR_MATCHED_WORDS')
+    console.log(store.getters.getWords)
+  }
+
+  public cancelAllStreams(): void {
     this.imageStream.cancel()
+    this.wordStream.cancel()
   }
 }

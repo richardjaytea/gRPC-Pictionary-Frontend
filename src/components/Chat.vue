@@ -33,20 +33,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { ChatService } from '@/service/ChatService'
-import { MessageResponse } from '@/pb/services_pb'
+import { mapGetters } from 'vuex'
 
 interface Message {
   name: string
   content: string
 }
 
-@Component
+@Component({
+  computed: {
+    ...mapGetters({
+      chatService: 'getChatService',
+      messages: 'getMessages'
+    })
+  }
+})
 export default class Chat extends Vue {
-  private chatService!: ChatService
+  // Data
   private inputText: string = ''
-  private messages: Message[] = []
+
+  // Mapped Getters
+  private chatService!: ChatService
+  private messages!: Message[]
 
   private sendMessage(): void {
     if (this.inputText.trim() !== '') {
@@ -66,18 +76,10 @@ export default class Chat extends Vue {
     return name === '*System*'
   }
 
-  public cancelStream(): void {
-    this.chatService.cancelMessageStream()
-  }
-
-  public created(): void {
-    this.chatService = new ChatService()
-    this.chatService.connectMessageStream(response => {
-      const resp: MessageResponse = response as MessageResponse
-      this.messages.push({ name: resp.getName(), content: resp.getContent() })
-      this.$nextTick(() => {
-        this.scrollToBottom()
-      })
+  @Watch('messages')
+  private onMessagesUpdate(): void {
+    this.$nextTick(() => {
+      this.scrollToBottom()
     })
   }
 }

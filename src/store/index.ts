@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { Message } from '@/types/chat'
 
 Vue.use(Vuex)
 
@@ -7,7 +8,13 @@ const store = new Vuex.Store({
   state: {
     id: '',
     user: '',
-    room: ''
+    room: '',
+    chatService: '',
+    imageService: '',
+    image: '',
+    words: [],
+    matchedWords: [],
+    messages: []
   },
   getters: {
     getId: state => {
@@ -18,6 +25,24 @@ const store = new Vuex.Store({
     },
     getRoom: state => {
       return state.room
+    },
+    getChatService: state => {
+      return state.chatService
+    },
+    getImageService: state => {
+      return state.imageService
+    },
+    getImage: state => {
+      return state.image
+    },
+    getWords: state => {
+      return state.words
+    },
+    getMatchedWords: state => {
+      return state.matchedWords
+    },
+    getMessages: state => {
+      return state.messages
     }
   },
   mutations: {
@@ -29,6 +54,27 @@ const store = new Vuex.Store({
     },
     SET_ROOM(state, key) {
       state.room = key
+    },
+    SET_CHAT_SERVICE(state, service) {
+      state.chatService = service
+    },
+    SET_IMAGE_SERVICE(state, service) {
+      state.imageService = service
+    },
+    SET_IMAGE(state, image) {
+      state.image = image
+    },
+    SET_WORDS(state, words) {
+      state.words = words
+    },
+    ADD_MATCHED_WORD(state, word) {
+      (state.matchedWords as string[]).push(word)
+    },
+    CLEAR_MATCHED_WORDS(state) {
+      state.matchedWords = []
+    },
+    ADD_MESSAGE(state, message) {
+      (state.messages as Message[]).push(message)
     }
   },
   actions: {},
