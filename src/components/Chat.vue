@@ -73,7 +73,7 @@ export default class Chat extends Vue {
   }
 
   private isSystem(name: string): boolean {
-    return name === '*System*'
+    return name === process.env.VUE_APP_SYS_CHAT_NAME
   }
 
   @Watch('messages')
