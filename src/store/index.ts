@@ -11,10 +11,12 @@ const store = new Vuex.Store({
     room: '',
     chatService: '',
     imageService: '',
+    roomService: '',
     image: '',
     words: [],
     matchedWords: [],
-    messages: []
+    messages: [],
+    rooms: []
   },
   getters: {
     getId: state => {
@@ -43,6 +45,9 @@ const store = new Vuex.Store({
     },
     getMessages: state => {
       return state.messages
+    },
+    getRooms: state => {
+      return state.rooms
     }
   },
   mutations: {
@@ -61,6 +66,9 @@ const store = new Vuex.Store({
     SET_IMAGE_SERVICE(state, service) {
       state.imageService = service
     },
+    SET_ROOM_SERVICE(state, service) {
+      state.roomService = service
+    },
     SET_IMAGE(state, image) {
       state.image = image
     },
@@ -75,6 +83,9 @@ const store = new Vuex.Store({
     },
     ADD_MESSAGE(state, message) {
       (state.messages as Message[]).push(message)
+    },
+    SET_ROOMS(state, rooms) {
+      state.rooms = rooms
     }
   },
   actions: {},

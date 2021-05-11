@@ -7,10 +7,11 @@
       class="login--input"
     />
 
-    <b-form-input
+    <b-form-select
       v-model="room"
-      size="lg"
-      placeholder="Tell us what room!"
+      :options="roomsWithLabel"
+      value-field="key"
+      text-field="name"
       class="login--input"
     />
 
@@ -26,28 +27,47 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { AuthService } from '@/service/AuthService'
+import { RoomService } from '@/service/RoomService'
+import { mapGetters } from 'vuex'
+import { Room } from '@/types/room'
 
-@Component
+@Component({
+  computed: {
+    ...mapGetters({
+      rooms: 'getRooms'
+    })
+  }
+})
 export default class Login extends Vue {
   private authService!: AuthService
+  private roomService!: RoomService
+  private rooms!: Room[]
   private name: string = ''
   private room: string = ''
 
+  private get roomsWithLabel(): Room[] {
+    const label: Room = { name: 'Select a room!', key: '' }
+    return [label].concat(this.rooms)
+  }
+
   private login(): void {
-    this.authService.authenticate(this.name, this.room)
-      .then(() => {
-        this.$router.push({
-          name: 'Room',
-          params: {
-            user: this.name,
-            roomKey: this.room
-          }
+    if (this.name.trim() !== '' && this.room !== '') {
+      this.authService.authenticate(this.name, this.room)
+        .then(() => {
+          this.$router.push({
+            name: 'Room',
+            params: {
+              user: this.name,
+              roomKey: this.room
+            }
+          })
         })
-      })
+    }
   }
 
   public created(): void {
     this.authService = new AuthService()
+    this.roomService = new RoomService()
   }
 }
 </script>
